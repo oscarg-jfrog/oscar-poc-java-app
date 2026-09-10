@@ -49,7 +49,6 @@ jobs:
         run: |
           jf docker push \
             172.16.4.206:8082/poc-docker-local/poc-java-app:${{ github.sha }} \
-            poc-docker-local \
             --server-id=artifactory
 
       - name: Scan with Xray
