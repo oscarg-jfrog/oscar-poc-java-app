@@ -29,7 +29,7 @@ jobs:
       - name: Configure JFrog CLI
         run: |
           jf config add artifactory \
-            --url=${{ secrets.JF_URL }} \
+            --url=${{ vars.JF_URL }} \
             --user=${{ secrets.JF_USER }} \
             --password=${{ secrets.JF_PASSWORD }} \
             --interactive=false
@@ -48,13 +48,13 @@ jobs:
       - name: Push Docker image to Artifactory
         run: |
           docker tag poc-java-app:${{ github.sha }} \
-            ${{ secrets.JF_DOCKER_REGISTRY }}/poc-java-app:${{ github.sha }}
+            ${{ vars.JF_DOCKER_REGISTRY }}/poc-java-app:${{ github.sha }}
           docker login \
             -u ${{ secrets.JF_USER }} \
             -p ${{ secrets.JF_PASSWORD }} \
-            ${{ secrets.JF_DOCKER_REGISTRY }}
-          docker push ${{ secrets.JF_DOCKER_REGISTRY }}/poc-java-app:${{ github.sha }}
+            ${{ vars.JF_DOCKER_REGISTRY }}
+          docker push ${{ vars.JF_DOCKER_REGISTRY }}/poc-java-app:${{ github.sha }}
 
       - name: Scan with Xray
         run: |
-          jf docker scan ${{ secrets.JF_DOCKER_REGISTRY }}/poc-java-app:${{ github.sha }}
+          jf docker scan ${{ vars.JF_DOCKER_REGISTRY }}/poc-java-app:${{ github.sha }}
