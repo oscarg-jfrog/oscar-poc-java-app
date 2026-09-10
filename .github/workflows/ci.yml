@@ -55,6 +55,11 @@ jobs:
 
       - name: Scan with Xray
         run: |
-          jf docker scan \
-            172.16.4.206:8082/poc-docker-local/poc-java-app:${{ github.sha }} \
+          jf rt dl \
+            "poc-docker-local/poc-java-app/${{ github.sha }}/manifest.json" \
             --server-id=artifactory
+          jf xr scan \
+            --server-id=artifactory \
+            --watches=watch-poc-docker-images \
+            --format=table \
+            --fail=false
