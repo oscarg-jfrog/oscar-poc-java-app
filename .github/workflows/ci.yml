@@ -43,16 +43,16 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t 172.16.4.206:8082/poc-docker-local/poc-java-app:${{ github.sha }} .
+          docker build -t 172.16.4.206:8443/poc-docker-local/poc-java-app:${{ github.sha }} .
 
       - name: Push Docker image via JFrog CLI
         run: |
           jf docker push \
-            172.16.4.206:8082/poc-docker-local/poc-java-app:${{ github.sha }} \
+            172.16.4.206:8443/poc-docker-local/poc-java-app:${{ github.sha }} \
             --server-id=artifactory
 
       - name: Scan with Xray
         run: |
           jf docker scan \
-            172.16.4.206:8082/poc-docker-local/poc-java-app:${{ github.sha }} \
+            172.16.4.206:8443/poc-docker-local/poc-java-app:${{ github.sha }} \
             --server-id=artifactory
