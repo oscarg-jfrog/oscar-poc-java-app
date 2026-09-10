@@ -45,16 +45,13 @@ jobs:
         run: |
           docker build -t poc-java-app:${{ github.sha }} .
 
-      - name: Push Docker image to Artifactory
+      - name: Push Docker image via JFrog CLI
         run: |
-          docker tag poc-java-app:${{ github.sha }} \
-            ${{ vars.JF_DOCKER_REGISTRY }}/poc-java-app:${{ github.sha }}
-          docker login \
-            -u ${{ secrets.JF_USER }} \
-            -p ${{ secrets.JF_PASSWORD }} \
-            ${{ vars.JF_DOCKER_REGISTRY }}
-          docker push ${{ vars.JF_DOCKER_REGISTRY }}/poc-java-app:${{ github.sha }}
+          jf docker push poc-java-app:${{ github.sha }} \
+            poc-docker-local/poc-java-app:${{ github.sha }} \
+            --server-id=artifactory
 
       - name: Scan with Xray
         run: |
-          jf docker scan ${{ vars.JF_DOCKER_REGISTRY }}/poc-java-app:${{ github.sha }}
+          jf docker scan poc-docker-local/poc-java-app:${{ github.sha }} \
+            --server-id=artifactory
