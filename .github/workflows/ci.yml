@@ -52,14 +52,3 @@ jobs:
             poc-docker-local \
             --server-id=artifactory \
             --skip-login
-
-      - name: Scan with Xray
-        run: |
-          jf rt dl \
-            "poc-docker-local/poc-java-app/${{ github.sha }}/manifest.json" \
-            --server-id=artifactory
-          jf xr scan \
-            --server-id=artifactory \
-            --watches=watch-poc-docker-images \
-            --format=table \
-            --fail=false
