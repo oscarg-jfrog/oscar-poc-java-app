@@ -25,14 +25,19 @@ jobs:
 
       - name: Set up JFrog CLI
         uses: jfrog/setup-jfrog-cli@v3
-        env:
-          JF_URL: ${{ secrets.JF_URL }}
-          JF_USER: ${{ secrets.JF_USER }}
-          JF_PASSWORD: ${{ secrets.JF_PASSWORD }}
+
+      - name: Configure JFrog CLI
+        run: |
+          jf config add artifactory \
+            --url=${{ secrets.JF_URL }} \
+            --user=${{ secrets.JF_USER }} \
+            --password=${{ secrets.JF_PASSWORD }} \
+            --interactive=false
 
       - name: Upload JAR to Artifactory
         run: |
           jf rt upload \
+            --server-id=artifactory \
             "target/poc-java-app-1.0-SNAPSHOT.jar" \
             "poc-java-app-repo/com/example/poc-java-app/1.0-SNAPSHOT/"
 
