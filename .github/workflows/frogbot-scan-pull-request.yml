@@ -9,6 +9,7 @@ permissions:
 jobs:
   scan-pull-request:
     runs-on: self-hosted
+    environment: frogbot
     steps:
       - uses: jfrog/frogbot@v2
         env:
