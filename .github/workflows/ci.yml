@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  id-token: write   # required to request the OIDC JWT from GitHub
+  contents: read
+
 jobs:
   build-and-scan:
     runs-on: self-hosted
@@ -23,32 +27,28 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      - name: Set up JFrog CLI
+      - name: Set up JFrog CLI with OIDC
         uses: jfrog/setup-jfrog-cli@v3
-
-      - name: Configure JFrog CLI
-        run: |
-          jf config add artifactory \
-            --url=${{ vars.JF_URL }} \
-            --user=${{ secrets.JF_USER }} \
-            --password=${{ secrets.JF_PASSWORD }} \
-            --interactive=false
+        env:
+          JF_URL: ${{ vars.JF_URL }}
+        with:
+          oidc-provider-name: <YOUR_PROVIDER_NAME>
 
       - name: Upload JAR to Artifactory
         run: |
           jf rt upload \
-            --server-id=artifactory \
+            --server-id=setup-jfrog-cli-server \
             "target/poc-java-app-1.0-SNAPSHOT.jar" \
             "poc-java-app-repo/com/example/poc-java-app/1.0-SNAPSHOT/"
 
       - name: Build Docker image with Podman
         run: |
-          podman build -t 172.16.4.206:8082/poc-docker-local/poc-java-app:${{ github.sha }} .
+          podman build -t ${{ vars.JF_DOCKER_REGISTRY }}/poc-docker-local/poc-java-app:${{ github.sha }} .
 
       - name: Push Docker image via JFrog CLI
         run: |
           jf rt podman-push \
-            172.16.4.206:8082/poc-docker-local/poc-java-app:${{ github.sha }} \
+            ${{ vars.JF_DOCKER_REGISTRY }}/poc-docker-local/poc-java-app:${{ github.sha }} \
             poc-docker-local \
-            --server-id=artifactory \
+            --server-id=setup-jfrog-cli-server \
             --skip-login
