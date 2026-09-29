@@ -20,4 +20,4 @@ jobs:
           JF_URL: ${{ vars.JF_URL }}
           JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          oidc-provider-name: frogbot-integration 
+          oidc-provider-name: frogbot-generic-oidc
