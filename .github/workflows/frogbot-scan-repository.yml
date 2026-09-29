@@ -29,3 +29,4 @@ jobs:
           JF_GIT_BASE_BRANCH: ${{ matrix.branch }}
         with:
           oidc-provider-name: frogbot-integration 
+          oidc-audience: https://github.com/oscarg-jfrog
